@@ -72,9 +72,29 @@ export default function ChatInterface() {
 
       const data = await response.json()
 
+      let messageContent = 'Unable to process your question'
+
+      // Extract the actual message content from the response
+      if (data.response) {
+        if (typeof data.response === 'string') {
+          messageContent = data.response
+        } else if (typeof data.response === 'object' && data.response !== null) {
+          // Extract message from various possible response structures
+          messageContent =
+            data.response.message ||
+            data.response.answer ||
+            data.response.result ||
+            data.response.response ||
+            data.response.data ||
+            JSON.stringify(data.response)
+        }
+      } else if (data.message && typeof data.message === 'string') {
+        messageContent = data.message
+      }
+
       const agentMessage: Message = {
         id: (Date.now() + 1).toString(),
-        content: data.response || data.message || 'Unable to process your question',
+        content: messageContent,
         sender: 'agent',
         timestamp: new Date()
       }
