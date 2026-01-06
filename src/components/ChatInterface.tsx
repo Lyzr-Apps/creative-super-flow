@@ -74,8 +74,12 @@ export default function ChatInterface() {
 
       let messageContent = 'Unable to process your question'
 
-      // Extract the actual message content from the response
-      if (data.response) {
+      // Check for raw_response first (plain text from agent)
+      if (data.raw_response && typeof data.raw_response === 'string') {
+        messageContent = data.raw_response
+      }
+      // Then check parsed response
+      else if (data.response) {
         if (typeof data.response === 'string') {
           messageContent = data.response
         } else if (typeof data.response === 'object' && data.response !== null) {
